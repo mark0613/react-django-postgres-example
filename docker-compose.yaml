@@ -1,0 +1,65 @@
+name: ${COMPOSE_NAME?COMPOSE_NAME is required}
+
+services:
+    frontend:
+        container_name: ${FRONTEND_CONTAINER_NAME?FRONTEND_CONTAINER_NAME is required}
+        build: ./frontend
+        restart: on-failure
+        volumes:
+            - ./frontend:/app
+            - '/app/node_modules'
+            - dist_volume:/app/dist
+
+    backend:
+        container_name: ${BACKEND_CONTAINER_NAME?BACKEND_CONTAINER_NAME is required}
+        build: ./backend
+        ports:
+            - ${BACKEND_PORT?BACKEND_PORT is required}:8000
+        restart: always
+        volumes:
+            - ./backend:/app
+            - media_volume:/app/media
+        depends_on:
+            postgres:
+                condition: service_healthy
+
+    nginx:
+        container_name: ${NGINX_CONTAINER_NAME?NGINX_CONTAINER_NAME is required}
+        image: nginx:1.27.4
+        environment:
+            - BACKEND_CONTAINER_NAME=${BACKEND_CONTAINER_NAME?BACKEND_CONTAINER_NAME is required}
+        entrypoint: /entrypoint.sh
+        ports:
+            - ${NGINX_PORT?NGINX_PORT is required}:80
+        restart: always
+        volumes:
+            - ./nginx/default.conf:/etc/nginx/templates/default.conf.template:ro
+            - ./nginx/entrypoint.sh:/entrypoint.sh:ro
+            # frontend
+            - dist_volume:/app/dist
+            # backend
+            - media_volume:/app/media
+
+    postgres:
+        container_name: ${POSTGRES_CONTAINER_NAME?POSTGRES_CONTAINER_NAME is required}
+        image: postgres:16
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER?POSTGRES_USER is required}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD?POSTGRES_PASSWORD is required}
+            POSTGRES_DB: ${POSTGRES_DB?POSTGRES_DB is required}
+        ports:
+          - ${POSTGRES_PORT?POSTGRES_PORT is required}:5432
+        restart: always
+        volumes:
+            - pg_data:/var/lib/postgresql/data/
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+            interval: 10s
+            timeout: 10s
+            retries: 5
+            start_period: 30s
+
+volumes:
+    media_volume:
+    dist_volume:
+    pg_data:

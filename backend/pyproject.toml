@@ -1,0 +1,65 @@
+[tool.poetry]
+name = "rdp-example"
+version = "0.1.0"
+description = ""
+authors = []
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^5.2"
+django-cors-headers = "^4.7.0"
+djangorestframework = "^3.16.0"
+djangorestframework-simplejwt = "^5.5.0"
+concurrent-log-handler = "^0.9.25"
+python-dotenv = "^1.1.0"
+psycopg-binary = "^3.2.6"
+psycopg2 = "^2.9.10"
+gunicorn = "^23.0.0"
+uvicorn = "^0.34.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+ruff = "^0.11.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+include = '\.pyi?$'
+extend-exclude = '''
+(
+    \.git/
+    | \.ruff_cache/
+    | logs/
+    | media/
+    | static/
+    | venv/
+    | .venv/
+)
+'''
+line-length = 100
+
+[tool.ruff]
+lint.select = [
+    "Q",
+    "I",
+    "F401",
+]
+lint.exclude = [
+    ".git",
+    ".ruff_cache",
+    "logs",
+    "media",
+    "static",
+    "venv",
+    ".venv",
+]
+lint.ignore-init-module-imports = true
+line-length = 100
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "single"
+multiline-quotes = "double"
+docstring-quotes = "double"
