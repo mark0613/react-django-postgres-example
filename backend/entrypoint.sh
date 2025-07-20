@@ -6,11 +6,11 @@ if [ ! -d "logs" ]; then
     chmod -R 777 logs
 fi
 
-# migrate & static
-poetry run python manage.py migrate --noinput
+# migrate
+python manage.py migrate --noinput
 
 # run
-poetry run gunicorn --access-logfile - \
+gunicorn --access-logfile - \
     --workers 4 \
     --bind 0.0.0.0:8000 \
     -k uvicorn.workers.UvicornWorker \

@@ -2,19 +2,23 @@
 
 
 ## Getting Started
-1. 確保已安裝 Python 3.11 和 Poetry 1.7.1
+1. 確保已安裝 Python 3.11 和 uv
 2. 確保已經啟動 PostgreSQL Server，如果想用 Docker 快速啟動，請切換到上個目錄 (即整個專案的根目錄)，修改好 `.env` 之後執行
     ```bash
     docker compose up -d postgres
     ```
 3. 複製 `.env.example` 為 `.env`，並根據需要修改環境變數，注意 `.env` 的 `DB_HOST`，如果是本地開發請設為 `127.0.0.1`，如果是 Docker 環境請設為 `postgres`
-4. 安裝依賴
+4. 建立虛擬環境
+    ```
+    uv venv .venv
+    ```
+5. 安裝依賴
    ```bash
-   poetry install --no-root
+   uv sync
    ```
-5. 啟動開發伺服器
+6. 啟動開發伺服器
    ```bash
-    poetry run python manage.py runserver
+    uv run python manage.py runserver
     ```
 
 

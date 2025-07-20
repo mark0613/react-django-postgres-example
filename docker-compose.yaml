@@ -19,6 +19,7 @@ services:
         volumes:
             - ./backend:/app
             - media_volume:/app/media
+            - /app/.venv
         depends_on:
             postgres:
                 condition: service_healthy
