@@ -16,6 +16,8 @@ dependencies = [
     "psycopg2>=2.9.10,<3",
     "gunicorn>=23.0.0,<24",
     "uvicorn>=0.34.0,<0.35",
+    "pytest>=8.4.1",
+    "pytest-django>=4.11.1",
 ]
 
 [dependency-groups]
