@@ -4,11 +4,12 @@ services:
     frontend:
         container_name: ${FRONTEND_CONTAINER_NAME?FRONTEND_CONTAINER_NAME is required}
         build: ./frontend
-        restart: on-failure
-        volumes:
-            - ./frontend:/app
-            - '/app/node_modules'
-            - dist_volume:/app/dist
+        environment:
+            API_SERVER: ${API_SERVER?API_SERVER is required}
+            MEDIA_SERVER: ${MEDIA_SERVER?MEDIA_SERVER is required}
+        ports:
+            - ${FRONTEND_PORT?FRONTEND_PORT is required}:80
+        restart: always
 
     backend:
         container_name: ${BACKEND_CONTAINER_NAME?BACKEND_CONTAINER_NAME is required}
@@ -18,28 +19,10 @@ services:
         restart: always
         volumes:
             - ./backend:/app
-            - media_volume:/app/media
             - /app/.venv
         depends_on:
             postgres:
                 condition: service_healthy
-
-    nginx:
-        container_name: ${NGINX_CONTAINER_NAME?NGINX_CONTAINER_NAME is required}
-        image: nginx:1.27.4
-        environment:
-            - BACKEND_CONTAINER_NAME=${BACKEND_CONTAINER_NAME?BACKEND_CONTAINER_NAME is required}
-        entrypoint: /entrypoint.sh
-        ports:
-            - ${NGINX_PORT?NGINX_PORT is required}:80
-        restart: always
-        volumes:
-            - ./nginx/default.conf:/etc/nginx/templates/default.conf.template:ro
-            - ./nginx/entrypoint.sh:/entrypoint.sh:ro
-            # frontend
-            - dist_volume:/app/dist
-            # backend
-            - media_volume:/app/media
 
     postgres:
         container_name: ${POSTGRES_CONTAINER_NAME?POSTGRES_CONTAINER_NAME is required}
@@ -61,6 +44,4 @@ services:
             start_period: 30s
 
 volumes:
-    media_volume:
-    dist_volume:
     pg_data:
