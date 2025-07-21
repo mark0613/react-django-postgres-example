@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'corsheaders',
     # apps
     'command',
+    'apps.health',
     'apps.user',
 ]
 

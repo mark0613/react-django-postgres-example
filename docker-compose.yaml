@@ -10,6 +10,15 @@ services:
     ports:
       - ${FRONTEND_PORT?FRONTEND_PORT is required}:80
     restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 20s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    depends_on:
+      backend:
+        condition: service_healthy
 
   backend:
     container_name: ${BACKEND_CONTAINER_NAME?BACKEND_CONTAINER_NAME is required}
@@ -20,6 +29,12 @@ services:
     volumes:
       - ./backend:/app
       - /app/.venv
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health/ready/"]
+      interval: 20s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     depends_on:
       postgres:
         condition: service_healthy
