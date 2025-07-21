@@ -41,9 +41,10 @@ async function handleRefreshToken(refresh, api) {
 }
 
 const baseQueryWithReauth = async (args, api, extraOptions) => {
-    const isAuthEndpoint = args.url.includes('/login')
-        || args.url.includes('/register')
-        || args.url.includes('/refresh');
+    const url = typeof args === 'string' ? args : args.url;
+    const isAuthEndpoint = url.includes('/login')
+        || url.includes('/register')
+        || url.includes('/refresh');
     if (isAuthEndpoint) {
         return baseQuery(args, api, extraOptions);
     }
